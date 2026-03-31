@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐾 Wildlife Monitoring System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">🐾 Wildlife Monitor</div>
+    <ul class="nav-links">
+      <li><a href="/" class="active">Home</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/logs">Logs</a></li>
+    </ul>
+  </nav>
+
+  <main class="hero">
+    <div class="hero-content">
+      <h1>Wildlife Monitoring System</h1>
+      <p class="subtitle">AI-powered real-time detection of endangered species using YOLOv8</p>
+      <div class="hero-actions">
+        <a href="/dashboard" class="btn btn-primary">View Dashboard</a>
+        <a href="/logs" class="btn btn-secondary">Detection Logs</a>
+      </div>
+    </div>
+
+    <section class="features">
+      <div class="feature-card">
+        <span class="feature-icon">🎯</span>
+        <h3>Real-Time Detection</h3>
+        <p>YOLOv8 model detects tigers, elephants, rhinos & snow leopards instantly.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔔</span>
+        <h3>Instant Alerts</h3>
+        <p>Automatic alerts when endangered species are detected in camera feeds.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <h3>Analytics</h3>
+        <p>Species activity charts, heatmaps, and trend analytics over time.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🗂️</span>
+        <h3>Data Logging</h3>
+        <p>All detections stored with timestamp, location, and confidence score.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Wildlife Monitoring System &copy; 2025 &mdash; Powered by YOLOv8 &amp; Flask</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detection Logs — Wildlife Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">🐾 Wildlife Monitor</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/logs" class="active">Logs</a></li>
+    </ul>
+  </nav>
+
+  <main class="page-content">
+    <h1 class="page-title">Detection Logs</h1>
+
+    <!-- Filters -->
+    <section class="filters">
+      <label>
+        Species:
+        <select id="filter-species">
+          <option value="">All</option>
+          <option value="tiger">Tiger</option>
+          <option value="elephant">Elephant</option>
+          <option value="rhinoceros">Rhinoceros</option>
+          <option value="snow_leopard">Snow Leopard</option>
+        </select>
+      </label>
+      <label>
+        Last N days:
+        <select id="filter-days">
+          <option value="">All time</option>
+          <option value="1">Last 24 h</option>
+          <option value="7" selected>Last 7 days</option>
+          <option value="30">Last 30 days</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" id="btn-filter">Apply</button>
+    </section>
+
+    <!-- Alerts panel -->
+    <section class="alerts-panel" id="alerts-panel">
+      <h2>Active Alerts <span id="alert-count" class="badge">0</span></h2>
+      <div id="alerts-list"><p class="loading">Loading…</p></div>
+    </section>
+
+    <!-- Detections table -->
+    <section class="table-section">
+      <h2>All Detections</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Time (UTC)</th>
+            <th>Species</th>
+            <th>Confidence</th>
+            <th>Location</th>
+            <th>Source</th>
+            <th>Alert</th>
+          </tr>
+        </thead>
+        <tbody id="logs-body">
+          <tr><td colspan="7" class="loading">Loading…</td></tr>
+        </tbody>
+      </table>
+      <div class="pagination" id="pagination"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Wildlife Monitoring System &copy; 2025</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/logs.js') }}"></script>
+</body>
+</html>

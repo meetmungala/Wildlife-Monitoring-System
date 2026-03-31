@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Wildlife Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">🐾 Wildlife Monitor</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/dashboard" class="active">Dashboard</a></li>
+      <li><a href="/logs">Logs</a></li>
+    </ul>
+  </nav>
+
+  <main class="page-content">
+    <h1 class="page-title">Analytics Dashboard</h1>
+
+    <!-- Summary Cards -->
+    <section class="stats-grid" id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total">—</div>
+        <div class="stat-label">Total Detections (7d)</div>
+      </div>
+      <div class="stat-card alert-card">
+        <div class="stat-value" id="stat-alerts">—</div>
+        <div class="stat-label">Unresolved Alerts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-species">—</div>
+        <div class="stat-label">Species Detected</div>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section class="charts-grid">
+      <div class="chart-card">
+        <h2>Detections by Species</h2>
+        <canvas id="speciesChart" height="220"></canvas>
+      </div>
+      <div class="chart-card">
+        <h2>Detection Timeline (7 days)</h2>
+        <canvas id="timelineChart" height="220"></canvas>
+      </div>
+    </section>
+
+    <!-- Recent Detections Table -->
+    <section class="table-section">
+      <h2>Recent Detections</h2>
+      <table class="data-table" id="recent-table">
+        <thead>
+          <tr>
+            <th>Time (UTC)</th>
+            <th>Species</th>
+            <th>Confidence</th>
+            <th>Location</th>
+            <th>Alert Sent</th>
+          </tr>
+        </thead>
+        <tbody id="recent-body">
+          <tr><td colspan="5" class="loading">Loading…</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Wildlife Monitoring System &copy; 2025</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

@@ -1,39 +1,33 @@
-Here’s a **professional README.md** for your project 👇
-
----
-
 # 🐾 Wildlife Monitoring System using YOLOv8
 
-## 📌 Overview
-
-The **Wildlife Monitoring System** is an AI-powered solution designed to detect and monitor endangered animal species in real-time using camera trap feeds. The system leverages **YOLOv8 (You Only Look Once)** object detection to identify animals from images and video streams, helping conservationists track wildlife activity efficiently.
-
-This project aims to support **wildlife conservation**, reduce illegal poaching, and provide valuable ecological insights through automated monitoring.
+An AI-powered solution that detects and monitors endangered animal species in real-time using **YOLOv8** object detection, a **Flask** web dashboard, and a persistent detection database.
 
 ---
 
 ## 🚀 Features
 
-* 🎯 Real-time detection of endangered species
-* 📹 Supports live camera feeds and recorded videos
-* 🧠 Powered by YOLOv8 deep learning model
-* 📦 Custom-trained dataset for species recognition
-* 🔔 Alert system for detected endangered animals
-* 🗂️ Data logging (species, timestamp, location)
-* 📊 Dashboard for monitoring and analytics
+| Feature | Details |
+|---|---|
+| 🎯 Real-time detection | YOLOv8 on live camera feeds or recorded video |
+| 🐅 Species support | Tiger · Elephant · Rhinoceros · Snow Leopard |
+| 🔔 Alert system | Console + DB alert when endangered species detected |
+| 🗂️ Data logging | Timestamp, species, confidence, location, bounding box |
+| 📊 Web dashboard | Analytics charts, detection logs, unresolved alerts |
+| 🌙 Low-light mode | CLAHE enhancement for night-vision frames |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Component  | Technology Used                   |
-| ---------- | --------------------------------- |
-| Language   | Python                            |
-| AI Model   | YOLOv8 (Ultralytics)              |
-| Frameworks | OpenCV, PyTorch                   |
-| Backend    | Flask / Django                    |
-| Database   | PostgreSQL / MongoDB              |
-| Deployment | Local / Cloud (AWS, GCP optional) |
+| Component | Technology |
+|---|---|
+| Language | Python 3.10+ |
+| AI Model | YOLOv8 (Ultralytics) |
+| Computer Vision | OpenCV · PyTorch |
+| Backend | Flask + Flask-SQLAlchemy |
+| Database | SQLite (default) · PostgreSQL · MongoDB |
+| Frontend | Vanilla JS · Chart.js |
+| Deployment | Local · Docker · AWS / GCP (optional) |
 
 ---
 
@@ -41,150 +35,255 @@ This project aims to support **wildlife conservation**, reduce illegal poaching,
 
 ```
 Wildlife-Monitoring-System/
+├── app.py                     # Flask application entry point
+├── dataset.yaml               # YOLO dataset configuration
+├── requirements.txt           # Python dependencies
+├── .env.example               # Environment variable template
 │
-├── dataset/               # Training images and labels
-├── models/                # Trained YOLOv8 weights
 ├── src/
-│   ├── detection.py       # Real-time detection script
-│   ├── train.py           # Model training script
-│   ├── utils.py           # Helper functions
+│   ├── __init__.py
+│   ├── detection.py           # Real-time YOLOv8 detection script
+│   ├── train.py               # Model training script
+│   ├── utils.py               # Drawing, logging, preprocessing helpers
+│   ├── database.py            # SQLAlchemy models (Detection, Alert)
+│   └── alerts.py              # Alert generation pipeline
 │
-├── dashboard/             # Web dashboard (Flask/Django)
-├── outputs/               # Detection results
-├── requirements.txt       # Dependencies
-└── README.md              # Project documentation
+├── dataset/                   # YOLO-format dataset
+│   ├── images/
+│   │   ├── train/
+│   │   ├── val/
+│   │   └── test/
+│   └── labels/
+│       ├── train/
+│       ├── val/
+│       └── test/
+│
+├── models/                    # Trained YOLOv8 weights
+├── outputs/                   # Saved annotated detection frames
+│
+└── dashboard/
+    ├── templates/
+    │   ├── index.html         # Landing page
+    │   ├── dashboard.html     # Analytics dashboard
+    │   └── logs.html          # Detection logs & alerts
+    └── static/
+        ├── css/style.css
+        └── js/
+            ├── dashboard.js
+            └── logs.js
 ```
-
----
-
-## 📊 Dataset
-
-The model is trained on a **custom dataset** containing images of endangered species such as:
-
-* 🐅 Tiger
-* 🐘 Elephant
-* 🦏 Rhinoceros
-* 🐆 Snow Leopard
-
-Dataset format follows YOLO annotation standards.
 
 ---
 
 ## ⚙️ Installation
 
-### 1️⃣ Clone the repository
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/wildlife-monitoring.git
-cd wildlife-monitoring
+git clone https://github.com/your-username/Wildlife-Monitoring-System.git
+cd Wildlife-Monitoring-System
 ```
 
-### 2️⃣ Install dependencies
+### 2. Create a virtual environment
+
+```bash
+python -m venv venv
+source venv/bin/activate   # Windows: venv\Scripts\activate
+```
+
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3️⃣ Install YOLOv8
+### 4. Configure environment
 
 ```bash
-pip install ultralytics
+cp .env.example .env
+# Edit .env to set SECRET_KEY, DATABASE_URL, etc.
 ```
+
+---
+
+## 📊 Dataset Preparation
+
+Organise your images and YOLO-format annotation files under `dataset/`:
+
+```
+dataset/
+  images/train/   <- training images (.jpg / .png)
+  images/val/     <- validation images
+  labels/train/   <- YOLO .txt annotation files
+  labels/val/
+```
+
+Each `.txt` label file contains one detection per line:
+```
+<class_id> <cx> <cy> <width> <height>
+```
+
+Class mapping (defined in `dataset.yaml`):
+```
+0: tiger
+1: elephant
+2: rhinoceros
+3: snow_leopard
+```
+
+Public datasets for endangered species: [iNaturalist](https://www.inaturalist.org/), [GBIF](https://www.gbif.org/), [Wildlife Insights](https://www.wildlifeinsights.org/).
 
 ---
 
 ## 🧠 Model Training
 
 ```bash
+python src/train.py \
+    --model yolov8n.pt \
+    --data dataset.yaml \
+    --epochs 50 \
+    --imgsz 640 \
+    --batch 16
+```
+
+Or via the Ultralytics CLI:
+
+```bash
 yolo task=detect mode=train model=yolov8n.pt data=dataset.yaml epochs=50 imgsz=640
 ```
+
+Trained weights are saved to `models/wildlife_yolov8/weights/best.pt`.
 
 ---
 
 ## 🎥 Run Detection
 
-### ▶️ On Image
-
-```bash
-python src/detection.py --source image.jpg
-```
-
-### ▶️ On Video / Camera Feed
+### On a webcam (camera index 0)
 
 ```bash
 python src/detection.py --source 0
 ```
 
+### On a video file
+
+```bash
+python src/detection.py --source /path/to/video.mp4
+```
+
+### On an image or directory of images
+
+```bash
+python src/detection.py --source /path/to/image.jpg
+python src/detection.py --source /path/to/images/
+```
+
+### With database logging and alerts
+
+```bash
+python src/detection.py --source 0 --log-db --location "Camera-Trap-A"
+```
+
+### Low-light / night vision enhancement
+
+```bash
+python src/detection.py --source 0 --low-light
+```
+
+### All options
+
+```
+--source        Source: 0 (webcam), file path, or directory
+--weights       Path to trained weights (default: models/wildlife_yolov8/weights/best.pt)
+--conf          Confidence threshold (default: 0.4)
+--iou           IoU threshold (default: 0.45)
+--imgsz         Inference image size (default: 640)
+--device        Device: '' auto, 'cpu', '0' for GPU
+--output        Output directory for saved frames (default: outputs/)
+--no-save       Suppress saving annotated frames
+--no-display    Suppress OpenCV window
+--low-light     Apply CLAHE low-light enhancement
+--location      Camera trap location label
+--log-db        Log detections and alerts to the database
+```
+
 ---
-
-## 🔔 Alert System
-
-* When an endangered species is detected:
-
-  * Console alert is triggered
-  * Detection is logged in database
-  * (Optional) Email/SMS notification
-
---- 
 
 ## 📈 Dashboard
 
-The dashboard provides:
-
-* Real-time detection view
-* Species detection logs
-* Activity analytics
-* Heatmaps of animal movement
-
-Run dashboard:
+Start the Flask server:
 
 ```bash
 python app.py
 ```
 
+Open [http://localhost:5000](http://localhost:5000) in your browser.
+
+| URL | Description |
+|---|---|
+| `/` | Landing page |
+| `/dashboard` | Analytics: species chart, 7-day timeline, recent detections |
+| `/logs` | Full detection log with filters and alert panel |
+
+### REST API
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/detections` | List detections (filterable by species/days) |
+| POST | `/api/detections` | Create detection record |
+| GET | `/api/detections/<id>` | Get single detection |
+| GET | `/api/alerts` | List alerts |
+| PATCH | `/api/alerts/<id>/resolve` | Mark alert as resolved |
+| GET | `/api/analytics/summary` | Summary stats for N days |
+| GET | `/api/analytics/timeline` | Per-day per-species counts |
+
+---
+
+## 🔔 Alert System
+
+When an endangered species is detected:
+
+1. A formatted alert is printed to the console.
+2. An `Alert` record is written to the database (when `--log-db` is active).
+3. The detection is flagged `alert_sent = True`.
+
+Unresolved alerts appear at the top of the **Logs** page.
+
+To extend alerts (e.g. email / SMS), add a notifier to `src/alerts.py`.
+
 ---
 
 ## 🌍 Applications
 
-* Wildlife conservation monitoring
-* Anti-poaching surveillance
-* Research and ecological studies
-* National park management
+- Wildlife conservation monitoring
+- Anti-poaching surveillance
+- Ecological research & species census
+- National park management
 
 ---
 
 ## 🔮 Future Enhancements
 
-* 📡 IoT integration with smart cameras
-* 🛰️ GPS-based tracking
-* 🌙 Night vision enhancement
-* 📱 Mobile app integration
-* ☁️ Cloud deployment for scalability
+- IoT integration with smart camera traps
+- GPS geolocation tagging per detection
+- Advanced night-vision (IR frame support)
+- Mobile app integration
+- Cloud deployment (AWS Rekognition / GCP Vision API)
+- Heatmap overlay of animal activity
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome!
-Feel free to fork the repository and submit a pull request.
+Contributions are welcome! Fork the repository and open a pull request.
 
 ---
 
 ## 📜 License
 
-This project is licensed under the MIT License.
-    
+This project is licensed under the **MIT License**.
+
 ---
 
 ## 👨‍💻 Author
 
-**Your Name**
-AI & Computer Vision Enthusiast
-
----
-
-If you want, I can also:
-
-* Convert this into **GitHub-ready styled README (with badges & images)**
-* Add **screenshots / UI preview**
-* Or create a **complete project report (for college submission)** 🚀
+AI & Computer Vision Enthusiast — Built with love for wildlife conservation.
