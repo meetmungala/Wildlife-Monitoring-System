@@ -201,7 +201,7 @@ body {
 /* ---- Filters ---- */
 .filters { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 1.5rem; }
 
-.filters label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; color: var(--text-muted); }
+.filters label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; color: var(--text-muted); min-width: 120px; flex: 1 1 120px; }
 
 .filters select {
   background: var(--surface-alt);
@@ -210,6 +210,7 @@ body {
   padding: 0.45rem 0.75rem;
   border-radius: var(--radius);
   font-size: 0.875rem;
+  width: 100%;
 }
 
 /* ---- Pagination ---- */
