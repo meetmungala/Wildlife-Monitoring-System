@@ -67,11 +67,11 @@ body {
 
 .hero-content { text-align: center; margin-bottom: 3rem; }
 
-.hero-content h1 { font-size: 2.5rem; margin-bottom: 0.75rem; }
+.hero-content h1 { font-size: clamp(1.6rem, 5vw, 2.5rem); margin-bottom: 0.75rem; }
 
-.subtitle { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1.75rem; }
+.subtitle { color: var(--text-muted); font-size: clamp(0.95rem, 2.5vw, 1.1rem); margin-bottom: 1.75rem; }
 
-.hero-actions { display: flex; gap: 1rem; justify-content: center; }
+.hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
 /* ---- Buttons ---- */
 .btn {
@@ -91,7 +91,7 @@ body {
 .btn-secondary:hover { background: var(--border); }
 
 /* ---- Feature Cards ---- */
-.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 1.25rem; }
 
 .feature-card {
   background: var(--surface);
@@ -106,7 +106,7 @@ body {
 
 /* ---- Page ---- */
 .page-content { flex: 1; padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
-.page-title { font-size: 1.8rem; margin-bottom: 1.5rem; }
+.page-title { font-size: clamp(1.3rem, 4vw, 1.8rem); margin-bottom: 1.5rem; }
 
 /* ---- Stats Grid ---- */
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
