@@ -49,16 +49,29 @@ body {
 }
 .nav-links a:hover, .nav-links a.active { color: var(--text); }
 
+/* Hamburger toggle button — hidden on desktop */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 1.4rem;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+}
+
 /* ---- Hero ---- */
 .hero { flex: 1; padding: 4rem 2rem 2rem; max-width: 1100px; margin: 0 auto; width: 100%; }
 
 .hero-content { text-align: center; margin-bottom: 3rem; }
 
-.hero-content h1 { font-size: 2.5rem; margin-bottom: 0.75rem; }
+.hero-content h1 { font-size: clamp(1.6rem, 5vw, 2.5rem); margin-bottom: 0.75rem; }
 
-.subtitle { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1.75rem; }
+.subtitle { color: var(--text-muted); font-size: clamp(0.95rem, 2.5vw, 1.1rem); margin-bottom: 1.75rem; }
 
-.hero-actions { display: flex; gap: 1rem; justify-content: center; }
+.hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
 /* ---- Buttons ---- */
 .btn {
@@ -78,7 +91,7 @@ body {
 .btn-secondary:hover { background: var(--border); }
 
 /* ---- Feature Cards ---- */
-.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 1.25rem; }
 
 .feature-card {
   background: var(--surface);
@@ -93,10 +106,10 @@ body {
 
 /* ---- Page ---- */
 .page-content { flex: 1; padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
-.page-title { font-size: 1.8rem; margin-bottom: 1.5rem; }
+.page-title { font-size: clamp(1.3rem, 4vw, 1.8rem); margin-bottom: 1.5rem; }
 
 /* ---- Stats Grid ---- */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 1rem; margin-bottom: 2rem; }
 
 .stat-card {
   background: var(--surface);
@@ -111,7 +124,7 @@ body {
 .stat-label { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem; }
 
 /* ---- Charts ---- */
-.charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
 
 .chart-card {
   background: var(--surface);
@@ -125,7 +138,9 @@ body {
 .table-section { margin-bottom: 2rem; }
 .table-section h2 { font-size: 1.1rem; margin-bottom: 0.75rem; }
 
-.data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; min-width: 480px; }
 
 .data-table th {
   background: var(--surface-alt);
@@ -186,7 +201,7 @@ body {
 /* ---- Filters ---- */
 .filters { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 1.5rem; }
 
-.filters label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; color: var(--text-muted); }
+.filters label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; color: var(--text-muted); min-width: 120px; flex: 1 1 120px; }
 
 .filters select {
   background: var(--surface-alt);
@@ -195,6 +210,7 @@ body {
   padding: 0.45rem 0.75rem;
   border-radius: var(--radius);
   font-size: 0.875rem;
+  width: 100%;
 }
 
 /* ---- Pagination ---- */
@@ -219,4 +235,75 @@ body {
   padding: 1rem;
   color: var(--text-muted);
   font-size: 0.8rem;
+}
+
+/* ==========================================================
+   Responsive Breakpoints
+   ========================================================== */
+
+/* --- Tablet / medium screens (≤ 768px) --- */
+@media (max-width: 768px) {
+  /* Navbar: show hamburger, collapse links */
+  .navbar {
+    flex-wrap: wrap;
+    padding: 0.75rem 1.25rem;
+    position: relative;
+  }
+  .nav-toggle { display: block; }
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    margin-top: 0.5rem;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links li { width: 100%; }
+  .nav-links a {
+    display: block;
+    padding: 0.65rem 1rem;
+    font-size: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Hero */
+  .hero { padding: 2.5rem 1.25rem 1.5rem; }
+  .hero-content { margin-bottom: 2rem; }
+  .hero-actions { flex-direction: column; align-items: center; }
+  .hero-actions .btn { width: 100%; max-width: 280px; text-align: center; }
+
+  /* Page */
+  .page-content { padding: 1.25rem; }
+
+  /* Dashboard stat cards */
+  .stats-grid { grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); }
+
+  /* Charts — each card full width on tablet */
+  .charts-grid { grid-template-columns: 1fr; }
+  .chart-card canvas { max-height: 260px; }
+}
+
+/* --- Mobile (≤ 480px) --- */
+@media (max-width: 480px) {
+  .hero { padding: 2rem 1rem 1.25rem; }
+
+  .page-content { padding: 1rem; }
+
+  /* Stat cards single column on tiny screens */
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Feature cards single column */
+  .features { grid-template-columns: 1fr; }
+
+  /* Buttons full width */
+  .btn { width: 100%; text-align: center; }
+  .filters .btn { width: auto; }
+
+  /* Alerts panel */
+  .alerts-panel { padding: 1rem; }
+
+  /* Pagination buttons smaller tap targets still comfortable */
+  .pagination button { padding: 0.4rem 0.65rem; }
 }
