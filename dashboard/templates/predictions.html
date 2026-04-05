@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Behavior Predictions — Wildlife Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">🐾 Wildlife Monitor</div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/logs">Logs</a></li>
+      <li><a href="/predictions" class="active">Predictions</a></li>
+    </ul>
+  </nav>
+
+  <main class="page-content">
+    <h1 class="page-title">🧠 AI Behavior Predictions</h1>
+
+    <!-- ── Run prediction form ── -->
+    <section class="pred-form-section">
+      <h2>Run a Prediction</h2>
+      <div class="pred-form">
+        <label>
+          Animal ID
+          <input type="text" id="input-animal-id" placeholder="e.g. tiger-001" />
+        </label>
+        <label>
+          Species
+          <select id="input-species">
+            <option value="tiger">Tiger</option>
+            <option value="elephant">Elephant</option>
+            <option value="rhinoceros">Rhinoceros</option>
+            <option value="snow_leopard">Snow Leopard</option>
+          </select>
+        </label>
+        <button class="btn btn-primary" id="btn-run-prediction">▶ Run</button>
+      </div>
+      <div id="pred-result" class="pred-result hidden"></div>
+    </section>
+
+    <!-- ── Trajectory visualisation ── -->
+    <section class="charts-grid">
+      <div class="chart-card">
+        <h2>Trajectory &amp; Predicted Path</h2>
+        <canvas id="trajectoryChart" height="300"></canvas>
+        <p class="chart-legend">
+          <span class="legend-dot legend-actual"></span> Observed &nbsp;
+          <span class="legend-dot legend-predicted"></span> Predicted
+        </p>
+      </div>
+      <div class="chart-card">
+        <h2>Behavior Score Breakdown</h2>
+        <canvas id="behaviorChart" height="300"></canvas>
+      </div>
+    </section>
+
+    <!-- ── Predicted alerts ── -->
+    <section class="alerts-panel" id="predicted-alerts-panel">
+      <h2>⚠️ Predicted Alerts <span class="badge" id="alert-count">0</span></h2>
+      <div id="predicted-alerts-list">
+        <p class="loading">No alerts yet.</p>
+      </div>
+    </section>
+
+    <!-- ── Recent predictions table ── -->
+    <section class="table-section">
+      <h2>Recent Predictions</h2>
+      <div class="table-responsive">
+        <table class="data-table" id="predictions-table">
+          <thead>
+            <tr>
+              <th>Time (UTC)</th>
+              <th>Animal ID</th>
+              <th>Species</th>
+              <th>Behavior</th>
+              <th>Confidence</th>
+            </tr>
+          </thead>
+          <tbody id="predictions-body">
+            <tr><td colspan="5" class="loading">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Alert rules ── -->
+    <section class="table-section">
+      <h2>Alert Rules</h2>
+      <button class="btn btn-secondary" id="btn-show-rule-form" style="margin-bottom:0.75rem">+ Add Rule</button>
+      <div id="rule-form" class="pred-form hidden" style="margin-bottom:1rem">
+        <label>Rule Name <input type="text" id="rule-name" placeholder="Tiger near village" /></label>
+        <label>Species <input type="text" id="rule-species" placeholder="tiger (leave blank for any)" /></label>
+        <label>Behavior <input type="text" id="rule-behavior" placeholder="hunting (leave blank for any)" /></label>
+        <label>Min Confidence <input type="number" id="rule-conf" value="0.5" min="0" max="1" step="0.05" /></label>
+        <button class="btn btn-primary" id="btn-save-rule">Save Rule</button>
+        <button class="btn btn-secondary" id="btn-cancel-rule">Cancel</button>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table" id="rules-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Species</th>
+              <th>Behavior</th>
+              <th>Min Confidence</th>
+              <th>Active</th>
+            </tr>
+          </thead>
+          <tbody id="rules-body">
+            <tr><td colspan="5" class="loading">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Wildlife Monitoring System &copy; 2025</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/predictions.js') }}"></script>
+</body>
+</html>

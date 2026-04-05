@@ -17,18 +17,21 @@ from flask import Flask, jsonify, render_template, request
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from src.database import Alert, Detection, db, init_db
+from src.database import Alert, AlertRule, AnimalTrajectory, BehaviorPrediction, PredictedAlert, Detection, db, init_db
 
 logger = logging.getLogger(__name__)
 
 
-def create_app() -> Flask:
+def create_app(test_config: dict | None = None) -> Flask:
     app = Flask(__name__, template_folder="dashboard/templates", static_folder="dashboard/static")
 
     db_url = os.getenv("DATABASE_URL", "sqlite:///wildlife.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = db_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "change-me-in-production")
+
+    if test_config:
+        app.config.update(test_config)
 
     init_db(app)
 
@@ -47,6 +50,10 @@ def create_app() -> Flask:
     @app.route("/logs")
     def logs_page():
         return render_template("logs.html")
+
+    @app.route("/predictions")
+    def predictions_page():
+        return render_template("predictions.html")
 
     # ------------------------------------------------------------------ #
     #  REST API - Detections
@@ -181,6 +188,158 @@ def create_app() -> Flask:
         return jsonify({
             "timeline": [{"date": str(r.date), "species": r.species, "count": r.count} for r in rows]
         })
+
+    # ------------------------------------------------------------------ #
+    #  REST API - Trajectories
+    # ------------------------------------------------------------------ #
+
+    @app.route("/api/trajectories", methods=["POST"])
+    def create_trajectory_point():
+        data = request.get_json(force=True)
+        required = {"animal_id", "species", "x", "y"}
+        if not required.issubset(data):
+            return jsonify({"error": f"Missing fields: {required - set(data)}"}), 400
+
+        point = AnimalTrajectory(
+            animal_id=data["animal_id"],
+            species=data["species"],
+            x=float(data["x"]),
+            y=float(data["y"]),
+            confidence=data.get("confidence"),
+            frame_index=data.get("frame_index"),
+            detection_id=data.get("detection_id"),
+        )
+        db.session.add(point)
+        db.session.commit()
+        return jsonify(point.to_dict()), 201
+
+    @app.route("/api/trajectories/<animal_id>", methods=["GET"])
+    def get_trajectory(animal_id):
+        limit = request.args.get("limit", 100, type=int)
+        hours = request.args.get("hours", type=int)
+        query = (
+            AnimalTrajectory.query
+            .filter(AnimalTrajectory.animal_id == animal_id)
+            .order_by(AnimalTrajectory.timestamp.desc())
+        )
+        if hours:
+            since = datetime.utcnow() - timedelta(hours=hours)
+            query = query.filter(AnimalTrajectory.timestamp >= since)
+        points = query.limit(limit).all()
+        return jsonify({
+            "animal_id": animal_id,
+            "points": [p.to_dict() for p in reversed(points)],
+        })
+
+    # ------------------------------------------------------------------ #
+    #  REST API - Behavior Predictions
+    # ------------------------------------------------------------------ #
+
+    def _get_prediction_service():
+        """Lazily initialise and cache the PredictionService on the app."""
+        if not hasattr(app, "_prediction_service"):
+            from src.behavior_classifier import BehaviorClassifier
+            from src.behavior_predictor import LSTMPredictor
+            from src.prediction_service import PredictionService
+            from src.trajectory_analyzer import TrajectoryAnalyzer
+            app._prediction_service = PredictionService(
+                db=db,
+                classifier=BehaviorClassifier(),
+                predictor=LSTMPredictor(),
+                analyzer=TrajectoryAnalyzer,
+            )
+        return app._prediction_service
+
+    @app.route("/api/predictions/run", methods=["POST"])
+    def run_prediction():
+        data = request.get_json(force=True)
+        required = {"animal_id", "species"}
+        if not required.issubset(data):
+            return jsonify({"error": f"Missing fields: {required - set(data)}"}), 400
+        svc = _get_prediction_service()
+        result = svc.run(data["animal_id"], data["species"])
+        status = 200 if "error" not in result else 422
+        return jsonify(result), status
+
+    @app.route("/api/predictions", methods=["GET"])
+    def list_predictions():
+        limit = request.args.get("limit", 50, type=int)
+        animal_id = request.args.get("animal_id")
+        query = BehaviorPrediction.query.order_by(BehaviorPrediction.timestamp.desc())
+        if animal_id:
+            query = query.filter(BehaviorPrediction.animal_id == animal_id)
+        preds = query.limit(limit).all()
+        return jsonify({"predictions": [p.to_dict() for p in preds]})
+
+    @app.route("/api/predictions/<int:pred_id>", methods=["GET"])
+    def get_prediction(pred_id):
+        pred = db.get_or_404(BehaviorPrediction, pred_id)
+        return jsonify(pred.to_dict())
+
+    # ------------------------------------------------------------------ #
+    #  REST API - Alert Rules
+    # ------------------------------------------------------------------ #
+
+    @app.route("/api/alert-rules", methods=["GET"])
+    def list_alert_rules():
+        rules = AlertRule.query.order_by(AlertRule.created_at.desc()).all()
+        return jsonify({"alert_rules": [r.to_dict() for r in rules]})
+
+    @app.route("/api/alert-rules", methods=["POST"])
+    def create_alert_rule():
+        data = request.get_json(force=True)
+        if not data.get("name"):
+            return jsonify({"error": "Missing required field: name"}), 400
+        zone = data.get("zone", {})
+        rule = AlertRule(
+            name=data["name"],
+            species=data.get("species"),
+            behavior=data.get("behavior"),
+            zone_x1=zone.get("x1"),
+            zone_y1=zone.get("y1"),
+            zone_x2=zone.get("x2"),
+            zone_y2=zone.get("y2"),
+            min_confidence=float(data.get("min_confidence", 0.5)),
+            active=bool(data.get("active", True)),
+        )
+        db.session.add(rule)
+        db.session.commit()
+        return jsonify(rule.to_dict()), 201
+
+    @app.route("/api/alert-rules/<int:rule_id>", methods=["PATCH"])
+    def update_alert_rule(rule_id):
+        rule = db.get_or_404(AlertRule, rule_id)
+        data = request.get_json(force=True)
+        for field in ("name", "species", "behavior", "min_confidence", "active"):
+            if field in data:
+                setattr(rule, field, data[field])
+        if "zone" in data:
+            z = data["zone"]
+            rule.zone_x1, rule.zone_y1 = z.get("x1"), z.get("y1")
+            rule.zone_x2, rule.zone_y2 = z.get("x2"), z.get("y2")
+        db.session.commit()
+        return jsonify(rule.to_dict())
+
+    # ------------------------------------------------------------------ #
+    #  REST API - Predicted Alerts
+    # ------------------------------------------------------------------ #
+
+    @app.route("/api/predicted-alerts", methods=["GET"])
+    def list_predicted_alerts():
+        resolved = request.args.get("resolved")
+        limit = request.args.get("limit", 50, type=int)
+        query = PredictedAlert.query.order_by(PredictedAlert.timestamp.desc())
+        if resolved is not None:
+            query = query.filter(PredictedAlert.resolved == (resolved.lower() == "true"))
+        alerts = query.limit(limit).all()
+        return jsonify({"predicted_alerts": [a.to_dict() for a in alerts]})
+
+    @app.route("/api/predicted-alerts/<int:alert_id>/resolve", methods=["PATCH"])
+    def resolve_predicted_alert(alert_id):
+        alert = db.get_or_404(PredictedAlert, alert_id)
+        alert.resolved = True
+        db.session.commit()
+        return jsonify(alert.to_dict())
 
     return app
 
