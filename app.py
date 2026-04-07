@@ -55,6 +55,10 @@ def create_app(test_config: dict | None = None) -> Flask:
     def predictions_page():
         return render_template("predictions.html")
 
+    @app.route("/heatmap")
+    def heatmap_page():
+        return render_template("heatmap.html")
+
     # ------------------------------------------------------------------ #
     #  REST API - Detections
     # ------------------------------------------------------------------ #
@@ -229,6 +233,89 @@ def create_app(test_config: dict | None = None) -> Flask:
         return jsonify({
             "animal_id": animal_id,
             "points": [p.to_dict() for p in reversed(points)],
+        })
+
+    # ------------------------------------------------------------------ #
+    #  REST API - Heatmap Analytics
+    # ------------------------------------------------------------------ #
+
+    @app.route("/api/analytics/heatmap", methods=["GET"])
+    def analytics_heatmap():
+        """Get heatmap data for animal movement visualization."""
+        days = request.args.get("days", 30, type=int)
+        species = request.args.get("species")
+        since = datetime.utcnow() - timedelta(days=days)
+
+        query = AnimalTrajectory.query.filter(AnimalTrajectory.timestamp >= since)
+
+        if species:
+            query = query.filter(AnimalTrajectory.species.ilike(f"%{species}%"))
+
+        points = query.all()
+
+        # Aggregate movement data
+        heatmap_data = []
+        for point in points:
+            heatmap_data.append({
+                "x": point.x,
+                "y": point.y,
+                "species": point.species,
+                "timestamp": point.timestamp.isoformat(),
+            })
+
+        # Calculate activity zones (most active areas)
+        activity_zones = {}
+        for point in points:
+            # Grid-based aggregation (10x10 grid cells)
+            grid_x = int(point.x / 10) * 10
+            grid_y = int(point.y / 10) * 10
+            key = f"{grid_x},{grid_y}"
+            if key not in activity_zones:
+                activity_zones[key] = {"x": grid_x, "y": grid_y, "count": 0, "species": {}}
+            activity_zones[key]["count"] += 1
+            species_name = point.species
+            activity_zones[key]["species"][species_name] = activity_zones[key]["species"].get(species_name, 0) + 1
+
+        # Get top active areas
+        top_zones = sorted(activity_zones.values(), key=lambda z: z["count"], reverse=True)[:10]
+
+        # Calculate migration routes (simplified path analysis)
+        migration_routes = {}
+        for point in points:
+            animal_key = f"{point.animal_id}_{point.species}"
+            if animal_key not in migration_routes:
+                migration_routes[animal_key] = []
+            migration_routes[animal_key].append({
+                "x": point.x,
+                "y": point.y,
+                "timestamp": point.timestamp.isoformat(),
+            })
+
+        # Get species statistics
+        species_stats = (
+            db.session.query(
+                AnimalTrajectory.species,
+                db.func.count(AnimalTrajectory.id).label("point_count"),
+                db.func.count(db.func.distinct(AnimalTrajectory.animal_id)).label("animal_count"),
+            )
+            .filter(AnimalTrajectory.timestamp >= since)
+            .group_by(AnimalTrajectory.species)
+            .all()
+        )
+
+        return jsonify({
+            "period_days": days,
+            "total_points": len(points),
+            "heatmap_data": heatmap_data,
+            "top_active_areas": top_zones,
+            "species_stats": [
+                {
+                    "species": s.species,
+                    "point_count": s.point_count,
+                    "animal_count": s.animal_count,
+                }
+                for s in species_stats
+            ],
         })
 
     # ------------------------------------------------------------------ #
