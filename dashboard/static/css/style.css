@@ -292,6 +292,220 @@ body {
 .legend-predicted { background: #f85149; }
 
 .hidden { display: none; }
+
+/* ---- Heatmap Page Styles ---- */
+.filter-section {
+  margin-bottom: 2rem;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.filter-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  flex: 1 1 140px;
+}
+
+.filter-controls select {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+}
+
+.heatmap-container {
+  margin-bottom: 2rem;
+}
+
+.heatmap-container h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.heatmap-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+#heatmap-canvas {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  flex: 1 1 auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.heatmap-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 100px;
+}
+
+.legend-title {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: center;
+}
+
+.legend-gradient {
+  height: 200px;
+  width: 30px;
+  background: linear-gradient(to top,
+    rgb(0, 0, 255),
+    rgb(0, 255, 255),
+    rgb(0, 255, 0),
+    rgb(255, 255, 0),
+    rgb(255, 0, 0)
+  );
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.legend-labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 200px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.migration-section {
+  margin-bottom: 2rem;
+}
+
+.migration-section h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.migration-info {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.migration-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.migration-card {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.migration-species {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.migration-data {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.danger-zones-section {
+  margin-bottom: 2rem;
+}
+
+.danger-zones-section h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.danger-zones-info {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.danger-zones-info > p {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.danger-zones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.danger-zone-card {
+  background: var(--surface-alt);
+  border: 1px solid var(--warning);
+  border-left: 4px solid var(--warning);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.danger-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.danger-info strong {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.danger-info p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.danger-info small {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.error-message {
+  background: var(--surface);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 1rem;
+  color: var(--danger);
+  text-align: center;
+}
+
 .footer {
   background: var(--surface);
   border-top: 1px solid var(--border);

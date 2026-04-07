@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heatmap — Wildlife Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">🐾 Wildlife Monitor</div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/logs">Logs</a></li>
+      <li><a href="/predictions">Predictions</a></li>
+      <li><a href="/heatmap" class="active">Heatmap</a></li>
+    </ul>
+  </nav>
+
+  <main class="page-content">
+    <h1 class="page-title">Animal Movement Heatmap</h1>
+
+    <!-- Filter Controls -->
+    <section class="filter-section">
+      <div class="filter-controls">
+        <label>
+          Time Period:
+          <select id="period-select">
+            <option value="7">Last 7 Days</option>
+            <option value="14">Last 14 Days</option>
+            <option value="30" selected>Last 30 Days</option>
+            <option value="60">Last 60 Days</option>
+            <option value="90">Last 90 Days</option>
+          </select>
+        </label>
+        <label>
+          Species Filter:
+          <select id="species-filter">
+            <option value="">All Species</option>
+          </select>
+        </label>
+        <button id="refresh-btn" class="btn-primary">Refresh</button>
+      </div>
+    </section>
+
+    <!-- Summary Stats -->
+    <section class="stats-grid" id="heatmap-stats">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total-points">—</div>
+        <div class="stat-label">Total Movement Points</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-species-count">—</div>
+        <div class="stat-label">Species Tracked</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-active-areas">—</div>
+        <div class="stat-label">Active Areas Detected</div>
+      </div>
+    </section>
+
+    <!-- Heatmap Canvas -->
+    <section class="heatmap-container">
+      <h2>Movement Intensity Heatmap</h2>
+      <div class="heatmap-wrapper">
+        <canvas id="heatmap-canvas" width="800" height="600"></canvas>
+        <div class="heatmap-legend">
+          <div class="legend-title">Intensity</div>
+          <div class="legend-gradient"></div>
+          <div class="legend-labels">
+            <span>Low</span>
+            <span>High</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Active Areas Table -->
+    <section class="table-section">
+      <h2>🔥 Top Active Areas</h2>
+      <div class="table-responsive">
+        <table class="data-table" id="active-areas-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Location (X, Y)</th>
+              <th>Activity Count</th>
+              <th>Dominant Species</th>
+              <th>Zone Type</th>
+            </tr>
+          </thead>
+          <tbody id="active-areas-body">
+            <tr><td colspan="5" class="loading">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Migration Routes -->
+    <section class="migration-section">
+      <h2>🗺️ Migration Routes Overview</h2>
+      <div class="migration-info" id="migration-info">
+        <p class="loading">Loading migration data…</p>
+      </div>
+    </section>
+
+    <!-- Dangerous Zones Info -->
+    <section class="danger-zones-section">
+      <h2>⚠️ Dangerous Zones</h2>
+      <div class="danger-zones-info">
+        <p>Dangerous zones are identified based on high-risk behaviors and proximity to hazardous areas.
+        Areas with frequent hunting behavior or near human settlements are marked as potential danger zones.</p>
+        <div id="danger-zones-list">
+          <p class="loading">Analyzing danger zones…</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>Wildlife Monitoring System &copy; 2025</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/heatmap.js') }}"></script>
+</body>
+</html>
