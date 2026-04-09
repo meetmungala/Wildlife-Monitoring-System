@@ -1,7 +1,7 @@
 # Wildlife Monitoring System - Utility Functions
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import cv2
@@ -54,7 +54,7 @@ def draw_detections(frame: np.ndarray, results, class_names: list[str]) -> np.nd
 def save_detection_frame(frame: np.ndarray, output_dir: str = "outputs") -> str:
     """Save annotated frame to disk and return the file path."""
     Path(output_dir).mkdir(parents=True, exist_ok=True)
-    ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S_%f")
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
     path = os.path.join(output_dir, f"detection_{ts}.jpg")
     cv2.imwrite(path, frame)
     return path
@@ -62,7 +62,7 @@ def save_detection_frame(frame: np.ndarray, output_dir: str = "outputs") -> str:
 
 def overlay_timestamp(frame: np.ndarray) -> np.ndarray:
     """Overlay current UTC timestamp on a frame."""
-    ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     h, w = frame.shape[:2]
     cv2.putText(frame, ts, (10, h - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
     return frame

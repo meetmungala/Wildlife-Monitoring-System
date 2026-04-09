@@ -2,6 +2,8 @@
 import os
 from datetime import datetime
 
+from datetime import timezone
+
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -16,10 +18,8 @@ class Detection(db.Model):
     __tablename__ = "detections"
 
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False, index=True)
     species = db.Column(db.String(100), nullable=False, index=True)
-    confidence = db.Column(db.Float, nullable=False)
-    location = db.Column(db.String(255), nullable=True)
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     source = db.Column(db.String(255), nullable=True)    # camera/file path
@@ -55,7 +55,7 @@ class Alert(db.Model):
     __tablename__ = "alerts"
 
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False, index=True)
     detection_id = db.Column(db.Integer, db.ForeignKey("detections.id"), nullable=False)
     species = db.Column(db.String(100), nullable=False)
     message = db.Column(db.Text, nullable=False)
@@ -87,7 +87,7 @@ class AnimalTrajectory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     animal_id = db.Column(db.String(100), nullable=False, index=True)
     species = db.Column(db.String(100), nullable=False, index=True)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False, index=True)
     x = db.Column(db.Float, nullable=False)
     y = db.Column(db.Float, nullable=False)
     confidence = db.Column(db.Float, nullable=True)
@@ -121,7 +121,7 @@ class BehaviorPrediction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     animal_id = db.Column(db.String(100), nullable=False, index=True)
     species = db.Column(db.String(100), nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False, index=True)
     behavior = db.Column(db.String(50), nullable=False)   # hunting/migrating/grazing/resting/other
     confidence = db.Column(db.Float, nullable=False)
     predicted_positions = db.Column(db.Text, nullable=True)  # JSON list of {x, y} dicts
@@ -160,7 +160,7 @@ class AlertRule(db.Model):
     zone_y2 = db.Column(db.Float, nullable=True)
     min_confidence = db.Column(db.Float, default=0.5, nullable=False)
     active = db.Column(db.Boolean, default=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
     def to_dict(self):
         return {
@@ -189,7 +189,7 @@ class PredictedAlert(db.Model):
     __tablename__ = "predicted_alerts"
 
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False, index=True)
     animal_id = db.Column(db.String(100), nullable=False)
     species = db.Column(db.String(100), nullable=False)
     behavior = db.Column(db.String(50), nullable=False)

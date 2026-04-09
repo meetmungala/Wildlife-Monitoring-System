@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -58,7 +58,7 @@ class PredictionService:
         """
         from src.database import AnimalTrajectory, BehaviorPrediction, AlertRule, PredictedAlert
 
-        since = datetime.utcnow() - timedelta(hours=self.lookback_hours)
+        since = datetime.now(timezone.utc) - timedelta(hours=self.lookback_hours)
         traj_rows = (
             AnimalTrajectory.query
             .filter(AnimalTrajectory.animal_id == animal_id)
@@ -190,7 +190,7 @@ class PredictionService:
 
     @staticmethod
     def _build_alert_message(rule: Any, prediction: Any) -> str:
-        ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+        ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
         return (
             f"[PREDICTED ALERT] Rule: '{rule.name}'\n"
             f"  Animal    : {prediction.animal_id}\n"
