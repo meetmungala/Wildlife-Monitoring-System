@@ -1,8 +1,6 @@
 # Wildlife Monitoring System - Database Models
 import os
-from datetime import datetime
-
-from datetime import timezone
+from datetime import datetime, timezone
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -20,6 +18,8 @@ class Detection(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False, index=True)
     species = db.Column(db.String(100), nullable=False, index=True)
+    confidence = db.Column(db.Float, nullable=False)
+    location = db.Column(db.String(255), nullable=True)
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     source = db.Column(db.String(255), nullable=True)    # camera/file path
