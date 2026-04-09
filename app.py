@@ -10,7 +10,7 @@ Run:
 import logging
 import os
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from flask import Flask, jsonify, render_template, request
@@ -75,7 +75,7 @@ def create_app(test_config: dict | None = None) -> Flask:
         if species:
             query = query.filter(Detection.species.ilike(f"%{species}%"))
         if days:
-            since = datetime.utcnow() - timedelta(days=days)
+            since = datetime.now(timezone.utc) - timedelta(days=days)
             query = query.filter(Detection.timestamp >= since)
 
         paginated = query.paginate(page=page, per_page=limit, error_out=False)
@@ -143,7 +143,7 @@ def create_app(test_config: dict | None = None) -> Flask:
     @app.route("/api/analytics/summary", methods=["GET"])
     def analytics_summary():
         days = request.args.get("days", 7, type=int)
-        since = datetime.utcnow() - timedelta(days=days)
+        since = datetime.now(timezone.utc) - timedelta(days=days)
 
         total = Detection.query.filter(Detection.timestamp >= since).count()
         unresolved_alerts = Alert.query.filter(Alert.resolved == False).count()
@@ -175,7 +175,7 @@ def create_app(test_config: dict | None = None) -> Flask:
     @app.route("/api/analytics/timeline", methods=["GET"])
     def analytics_timeline():
         days = request.args.get("days", 7, type=int)
-        since = datetime.utcnow() - timedelta(days=days)
+        since = datetime.now(timezone.utc) - timedelta(days=days)
 
         rows = (
             db.session.query(
@@ -227,7 +227,7 @@ def create_app(test_config: dict | None = None) -> Flask:
             .order_by(AnimalTrajectory.timestamp.desc())
         )
         if hours:
-            since = datetime.utcnow() - timedelta(hours=hours)
+            since = datetime.now(timezone.utc) - timedelta(hours=hours)
             query = query.filter(AnimalTrajectory.timestamp >= since)
         points = query.limit(limit).all()
         return jsonify({
@@ -244,7 +244,7 @@ def create_app(test_config: dict | None = None) -> Flask:
         """Get heatmap data for animal movement visualization."""
         days = request.args.get("days", 30, type=int)
         species = request.args.get("species")
-        since = datetime.utcnow() - timedelta(days=days)
+        since = datetime.now(timezone.utc) - timedelta(days=days)
 
         query = AnimalTrajectory.query.filter(AnimalTrajectory.timestamp >= since)
 

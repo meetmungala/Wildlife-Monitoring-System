@@ -1,7 +1,7 @@
 # Wildlife Monitoring System - Alert Generation
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -10,7 +10,7 @@ ENDANGERED_SPECIES = {"tiger", "elephant", "rhinoceros", "snow_leopard"}
 
 def generate_alert(species: str, confidence: float, location: str | None = None) -> str:
     """Build a human-readable alert message for a detected species."""
-    ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     loc_str = f" at {location}" if location else ""
     msg = (
         f"[ALERT] Endangered species detected!\n"
