@@ -105,7 +105,15 @@ python src/train.py --data dataset.yaml --epochs 50 --imgsz 640 --batch 16
 python -m pytest tests/ -v
 ```
 
+All 59 tests pass across the full test suite covering API endpoints, behavior
+classification, LSTM movement prediction, and trajectory analysis.
+
 ## REST API Endpoints
+
+### Health
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/health` | Service liveness probe — returns `{"status": "ok"}` |
 
 ### Detections
 | Method | Endpoint | Description |
@@ -113,6 +121,7 @@ python -m pytest tests/ -v
 | GET | `/api/detections` | List detections (supports `species`, `days`, `limit`, `page`) |
 | POST | `/api/detections` | Create a detection (`species`, `confidence` required) |
 | GET | `/api/detections/<id>` | Get a single detection |
+| DELETE | `/api/detections/<id>` | Delete a detection by ID |
 
 ### Alerts
 | Method | Endpoint | Description |

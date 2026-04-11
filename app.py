@@ -60,6 +60,15 @@ def create_app(test_config: dict | None = None) -> Flask:
         return render_template("heatmap.html")
 
     # ------------------------------------------------------------------ #
+    #  REST API - Health
+    # ------------------------------------------------------------------ #
+
+    @app.route("/api/health", methods=["GET"])
+    def health():
+        """Simple liveness probe."""
+        return jsonify({"status": "ok"})
+
+    # ------------------------------------------------------------------ #
     #  REST API - Detections
     # ------------------------------------------------------------------ #
 
@@ -90,6 +99,13 @@ def create_app(test_config: dict | None = None) -> Flask:
     def get_detection(det_id):
         det = db.get_or_404(Detection, det_id)
         return jsonify(det.to_dict())
+
+    @app.route("/api/detections/<int:det_id>", methods=["DELETE"])
+    def delete_detection(det_id):
+        det = db.get_or_404(Detection, det_id)
+        db.session.delete(det)
+        db.session.commit()
+        return jsonify({"deleted": True, "id": det_id})
 
     @app.route("/api/detections", methods=["POST"])
     def create_detection():
