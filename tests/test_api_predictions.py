@@ -174,3 +174,47 @@ class TestPredictionsPageRoute:
         resp = client.get("/predictions")
         assert resp.status_code == 200
         assert b"Behavior Predictions" in resp.data
+
+
+# ── Health endpoint ────────────────────────────────────────────────────
+
+class TestHealthEndpoint:
+
+    def test_health_returns_200(self, client):
+        resp = client.get("/api/health")
+        assert resp.status_code == 200
+
+    def test_health_returns_ok_status(self, client):
+        data = client.get("/api/health").get_json()
+        assert data["status"] == "ok"
+
+
+# ── Detection delete endpoint ──────────────────────────────────────────
+
+class TestDetectionDeleteEndpoint:
+
+    def _create_detection(self, client, species="lion", confidence=0.85):
+        resp = client.post("/api/detections", json={
+            "species": species,
+            "confidence": confidence,
+        })
+        assert resp.status_code == 201
+        return resp.get_json()["id"]
+
+    def test_delete_detection_returns_200(self, client):
+        det_id = self._create_detection(client)
+        resp = client.delete(f"/api/detections/{det_id}")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["deleted"] is True
+        assert data["id"] == det_id
+
+    def test_delete_detection_removes_it(self, client):
+        det_id = self._create_detection(client)
+        client.delete(f"/api/detections/{det_id}")
+        resp = client.get(f"/api/detections/{det_id}")
+        assert resp.status_code == 404
+
+    def test_delete_nonexistent_detection_returns_404(self, client):
+        resp = client.delete("/api/detections/999999")
+        assert resp.status_code == 404
