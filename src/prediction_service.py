@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ class PredictionService:
             ``predicted_positions``, ``alerts_generated``,
             ``prediction_id``.
         """
-        from src.database import AnimalTrajectory, BehaviorPrediction, AlertRule, PredictedAlert
+        from src.database import AnimalTrajectory, BehaviorPrediction
 
         since = datetime.now(timezone.utc) - timedelta(hours=self.lookback_hours)
         traj_rows = (
@@ -131,7 +131,7 @@ class PredictionService:
         """Check all active rules; create PredictedAlert rows when triggered."""
         from src.database import AlertRule, PredictedAlert
 
-        active_rules = AlertRule.query.filter(AlertRule.active == True).all()  # noqa: E712
+        active_rules = AlertRule.query.filter(AlertRule.active.is_(True)).all()
         count = 0
 
         for rule in active_rules:

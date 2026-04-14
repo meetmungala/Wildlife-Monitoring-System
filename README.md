@@ -4,6 +4,9 @@
 ![Languages](https://img.shields.io/badge/Language-CSS-1572B6.svg?logo=css3&logoColor=white&labelColor=black)
 ![Languages](https://img.shields.io/badge/Language-JavaScript-F7DF1E.svg?logo=javascript&logoColor=black&labelColor=black)
 ![Languages](https://img.shields.io/badge/Language-HTML-E34F26.svg?logo=html5&logoColor=white&labelColor=black)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-3.0%2B-black?logo=flask)
+![Tests](https://img.shields.io/badge/Tests-passing-brightgreen)
 
 ## Overview
 The Wildlife Monitoring System is an innovative project designed to track and monitor wildlife using computer vision and machine learning. It detects endangered species in real time via YOLOv8, predicts animal behavior from movement trajectories, and provides an interactive web dashboard with live alerts, analytics, and heatmap visualization.
@@ -49,7 +52,7 @@ Wildlife-Monitoring-System/
 
 ## System Requirements
 - **Operating System:** Ubuntu 20.04 or later
-- **Python Version:** 3.8 or higher
+- **Python Version:** 3.10 or higher
 - **Memory:** 8 GB RAM minimum
 - **Storage:** 100 GB free disk space
 
@@ -79,6 +82,30 @@ Wildlife-Monitoring-System/
    flask --app app run --debug
    ```
    The server starts at `http://localhost:5000`.
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DATABASE_URL` | `sqlite:///wildlife.db` | Database connection string. Use `postgresql://...` for production. |
+| `SECRET_KEY` | `change-me-in-production` | Flask secret key used for session signing. **Change before deploying.** |
+| `FLASK_DEBUG` | `false` | Set to `true` to enable Flask debug/reload mode. |
+
+## Docker
+
+You can run the application inside a container without installing any system dependencies locally.
+
+```bash
+# Build the image
+docker build -t wildlife-monitor .
+
+# Run with an external SQLite volume
+docker run -p 5000:5000 -v $(pwd)/data:/app/data \
+  -e DATABASE_URL=sqlite:////app/data/wildlife.db \
+  wildlife-monitor
+```
+
+For production, point `DATABASE_URL` at a PostgreSQL instance and set a strong `SECRET_KEY`.
 
 ## Running Detection
 
@@ -168,12 +195,13 @@ classification, LSTM movement prediction, and trajectory analysis.
 - **Scalability:** Can monitor up to 1000 animals simultaneously
 
 ## Troubleshooting
-- **Issue:** System fails to start
-  **Solution:** Ensure all environment variables are set correctly and necessary dependencies are installed.
-- **Issue:** Inaccurate detection of animals
-  **Solution:** Check the quality of input data and retrain the model with updated datasets.
-- **Issue:** Database connection errors
-  **Solution:** Verify that `DATABASE_URL` in `.env` points to a running database instance. The default SQLite database requires no additional setup.
+
+| Issue | Solution |
+|-------|----------|
+| System fails to start | Ensure all environment variables are set correctly and necessary dependencies are installed. |
+| Inaccurate detection results | Check the quality of input data and retrain the model with updated datasets. |
+| Database connection errors | Verify that `DATABASE_URL` in `.env` points to a running database instance. The default SQLite database requires no additional setup. |
+| Missing model weights | The system falls back to `yolov8n.pt` automatically if custom weights are not found. |
 
 ## Additional Applications
 - Used in national parks for real-time wildlife observation.
@@ -182,6 +210,11 @@ classification, LSTM movement prediction, and trajectory analysis.
 
 ## Contribute
 We welcome contributions to the Wildlife Monitoring System. Please fork the repository and submit your pull requests!  
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/my-feature`)
+3. Commit your changes (`git commit -m "feat: add my feature"`)
+4. Push the branch and open a Pull Request
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.

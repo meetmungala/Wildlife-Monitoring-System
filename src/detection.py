@@ -10,9 +10,7 @@ Usage:
 """
 import argparse
 import logging
-import os
 import sys
-from datetime import datetime
 from pathlib import Path
 
 # Ensure project root is on the Python path
@@ -186,8 +184,6 @@ def run_detection(args: argparse.Namespace, app=None) -> None:
             save=False,
             verbose=True,
         )
-
-        import cv2
 
         for res in results_list:
             frame = res.orig_img

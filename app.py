@@ -162,7 +162,7 @@ def create_app(test_config: dict | None = None) -> Flask:
         since = datetime.now(timezone.utc) - timedelta(days=days)
 
         total = Detection.query.filter(Detection.timestamp >= since).count()
-        unresolved_alerts = Alert.query.filter(Alert.resolved == False).count()
+        unresolved_alerts = Alert.query.filter(Alert.resolved.is_(False)).count()
 
         species_counts = (
             db.session.query(Detection.species, db.func.count(Detection.id).label("count"))
