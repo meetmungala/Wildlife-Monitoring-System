@@ -48,6 +48,11 @@ body {
   transition: color .2s;
 }
 .nav-links a:hover, .nav-links a.active { color: var(--text); }
+.nav-links a.active {
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 2px;
+}
 
 /* Hamburger toggle button — hidden on desktop */
 .nav-toggle {
@@ -99,6 +104,12 @@ body {
   border-radius: var(--radius);
   padding: 1.5rem;
   text-align: center;
+  transition: transform .2s, border-color .2s, box-shadow .2s;
+}
+.feature-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: 0 4px 20px rgba(63, 185, 80, 0.12);
 }
 .feature-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
 .feature-card h3 { margin-bottom: 0.4rem; font-size: 1rem; }
@@ -117,6 +128,11 @@ body {
   border-radius: var(--radius);
   padding: 1.25rem;
   text-align: center;
+  transition: transform .2s, box-shadow .2s;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 .stat-card.alert-card { border-color: var(--danger); }
 .stat-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
@@ -153,6 +169,7 @@ body {
 .data-table td {
   padding: 0.6rem 0.8rem;
   border-bottom: 1px solid var(--border);
+  transition: background .15s;
 }
 .data-table tr:hover td { background: var(--surface-alt); }
 
@@ -544,6 +561,11 @@ body {
     padding: 0.65rem 1rem;
     font-size: 1rem;
     border-bottom: 1px solid var(--border);
+  }
+  .nav-links a.active {
+    color: var(--accent);
+    border-bottom-color: var(--border);
+    padding-bottom: 0.65rem;
   }
 
   /* Hero */
