@@ -1,5 +1,4 @@
 # Wildlife Monitoring System - Database Models
-import os
 from datetime import datetime, timezone
 
 from flask_sqlalchemy import SQLAlchemy
