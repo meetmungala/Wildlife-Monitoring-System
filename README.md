@@ -6,7 +6,7 @@
 ![Languages](https://img.shields.io/badge/Language-HTML-E34F26.svg?logo=html5&logoColor=white&labelColor=black)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-3.0%2B-black?logo=flask)
-![Tests](https://img.shields.io/badge/Tests-59%20passed-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-passing-brightgreen)
 
 ## Overview
 The Wildlife Monitoring System is an innovative project designed to track and monitor wildlife using computer vision and machine learning. It detects endangered species in real time via YOLOv8, predicts animal behavior from movement trajectories, and provides an interactive web dashboard with live alerts, analytics, and heatmap visualization.
