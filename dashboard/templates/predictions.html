@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <nav class="navbar">
     <div class="nav-brand">🐾 Wildlife Monitor</div>
     <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
@@ -21,7 +22,7 @@
     </ul>
   </nav>
 
-  <main class="page-content">
+  <main id="main-content" class="page-content">
     <h1 class="page-title">🧠 AI Behavior Predictions</h1>
 
     <!-- ── Run prediction form ── -->
@@ -94,8 +95,8 @@
     <!-- ── Alert rules ── -->
     <section class="table-section">
       <h2>Alert Rules</h2>
-      <button class="btn btn-secondary" id="btn-show-rule-form" style="margin-bottom:0.75rem">+ Add Rule</button>
-      <div id="rule-form" class="pred-form hidden" style="margin-bottom:1rem">
+      <button class="btn btn-secondary mb-12" id="btn-show-rule-form">+ Add Rule</button>
+      <div id="rule-form" class="pred-form hidden mb-16">
         <label>Rule Name <input type="text" id="rule-name" placeholder="Tiger near village" /></label>
         <label>Species <input type="text" id="rule-species" placeholder="tiger (leave blank for any)" /></label>
         <label>Behavior <input type="text" id="rule-behavior" placeholder="hunting (leave blank for any)" /></label>
@@ -123,7 +124,7 @@
   </main>
 
   <footer class="footer">
-    <p>Wildlife Monitoring System &copy; 2025</p>
+    <p>Wildlife Monitoring System</p>
   </footer>
 
   <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
