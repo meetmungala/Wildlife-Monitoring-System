@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <nav class="navbar">
     <div class="nav-brand">🐾 Wildlife Monitor</div>
     <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
@@ -21,7 +22,7 @@
     </ul>
   </nav>
 
-  <main class="hero">
+  <main id="main-content" class="hero">
     <div class="hero-content">
       <h1>Wildlife Monitoring System</h1>
       <p class="subtitle">AI-powered real-time detection of endangered species using YOLOv8</p>
@@ -61,7 +62,7 @@
   </main>
 
   <footer class="footer">
-    <p>Wildlife Monitoring System &copy; 2025 &mdash; Powered by YOLOv8 &amp; Flask</p>
+    <p>Wildlife Monitoring System &mdash; Powered by YOLOv8 &amp; Flask</p>
   </footer>
   <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
 </body>

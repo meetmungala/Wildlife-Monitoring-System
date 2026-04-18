@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <nav class="navbar">
     <div class="nav-brand">🐾 Wildlife Monitor</div>
     <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
@@ -21,7 +22,7 @@
     </ul>
   </nav>
 
-  <main class="page-content">
+  <main id="main-content" class="page-content">
     <h1 class="page-title">Analytics Dashboard</h1>
 
     <!-- Summary Cards -->
@@ -75,7 +76,7 @@
   </main>
 
   <footer class="footer">
-    <p>Wildlife Monitoring System &copy; 2025</p>
+    <p>Wildlife Monitoring System</p>
   </footer>
 
   <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
