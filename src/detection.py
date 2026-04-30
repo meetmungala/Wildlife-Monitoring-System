@@ -170,7 +170,8 @@ def run_detection(args: argparse.Namespace, app=None) -> None:
                         break
         finally:
             cap.release()
-            cv2.destroyAllWindows()
+            if not args.no_display:
+                cv2.destroyAllWindows()
 
     else:
         # Image or directory
@@ -197,7 +198,8 @@ def run_detection(args: argparse.Namespace, app=None) -> None:
                 cv2.imshow("Wildlife Monitor", annotated)
                 cv2.waitKey(0)
 
-        cv2.destroyAllWindows()
+        if not args.no_display:
+            cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
