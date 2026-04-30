@@ -204,4 +204,9 @@ def run_detection(args: argparse.Namespace, app=None) -> None:
 
 if __name__ == "__main__":
     args = parse_args()
-    run_detection(args)
+    app = None
+    if args.log_db:
+        # Import here to avoid circular imports if imported elsewhere
+        from app import create_app
+        app = create_app()
+    run_detection(args, app=app)
