@@ -37,6 +37,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--low-light", action="store_true", help="Apply CLAHE low-light enhancement")
     parser.add_argument("--location", default=None, help="Camera trap location label")
     parser.add_argument("--log-db", action="store_true", help="Log detections to database")
+    parser.add_argument("--frame-interval", type=int, default=30, help="Process every Nth frame to avoid database spam")
     return parser.parse_args()
 
 
@@ -130,6 +131,11 @@ def run_detection(args: argparse.Namespace, app=None) -> None:
                     break
 
                 frame_count += 1
+                
+                # Skip processing to speed up video and avoid database spam
+                if frame_count % args.frame_interval != 0:
+                    continue
+
                 if args.low_light:
                     frame = enhance_low_light(frame)
 
