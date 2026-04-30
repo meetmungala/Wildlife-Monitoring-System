@@ -37,6 +37,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--low-light", action="store_true", help="Apply CLAHE low-light enhancement")
     parser.add_argument("--location", default=None, help="Camera trap location label")
     parser.add_argument("--log-db", action="store_true", help="Log detections to database")
+    parser.add_argument("--clear-db", action="store_true", help="Clear all database data before running")
     parser.add_argument("--frame-interval", type=int, default=30, help="Process every Nth frame to avoid database spam")
     return parser.parse_args()
 
@@ -214,5 +215,13 @@ if __name__ == "__main__":
     if args.log_db:
         # Import here to avoid circular imports if imported elsewhere
         from app import create_app
+        from src.database import db
         app = create_app()
+        
+        if args.clear_db:
+            with app.app_context():
+                db.drop_all()
+                db.create_all()
+                logger.info("Database cleared: starting from zero.")
+                
     run_detection(args, app=app)
